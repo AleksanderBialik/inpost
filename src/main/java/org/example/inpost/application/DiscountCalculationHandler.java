@@ -4,6 +4,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.example.inpost.common.NotFoundException;
+import org.example.inpost.common.PolicyCalculationType;
 import org.example.inpost.domain.Calculation;
 import org.example.inpost.domain.PricingPolicyAbstract;
 import org.example.inpost.domain.PricingPolicyRepository;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
 
@@ -32,18 +34,35 @@ public class DiscountCalculationHandler {
         var policies = pricingPolicyRepository.findAllByIds(command.policiesIds);
         validatePolicies(policies);
 
-        var productWithTaxPrice = product.price().multiply(product.vatPercent().divide(HUNDRED, 2, RoundingMode.HALF_UP));
-        var discountedProductPrice =
+
+        var productsPrice = product.price().multiply(BigDecimal.valueOf(command.productCount));
+        var productsWithTaxPrice = product.price().multiply(product.vatPercent().divide(HUNDRED, 2, RoundingMode.HALF_UP).add(BigDecimal.ONE)).multiply(BigDecimal.valueOf(command.productCount));
+        var discountedPrice = calculateDiscountedPriceWithPercentagePriority(product, command.productCount, productsPrice, policies);
+        var discountedTaxedPrice = calculateDiscountedPriceWithPercentagePriority(product, command.productCount, productsWithTaxPrice, policies);
 
         return Calculation
                 .builder()
-                .productCount(command.productCount)
+                .productQuantity(command.productCount)
                 .productName(product.name())
                 .productId(command.productId)
                 .productBasePrice(product.price())
-                .productBasePriceWithTax(productWithTaxPrice)
+                .totalDiscountedPrice(discountedPrice.compareTo(BigDecimal.ZERO) < 0 ? BigDecimal.ZERO : discountedPrice.setScale(2, RoundingMode.HALF_UP))
+                .totalDiscountedPriceWithTax(discountedTaxedPrice.compareTo(BigDecimal.ZERO) < 0 ? BigDecimal.ZERO : discountedTaxedPrice.setScale(2, RoundingMode.HALF_UP))
                 .build();
 
+    }
+
+    private BigDecimal calculateDiscountedPriceWithPercentagePriority(@NotNull Product product, @NotNull Integer productQuantity, @NotNull BigDecimal currentPrice, @NotNull List<PricingPolicyAbstract> policies) {
+        var price = currentPrice;
+        var sortedPolicies = policies.stream()
+                .sorted(Comparator.comparingInt(item -> item.getCalculationType() == PolicyCalculationType.PERCENTAGE ? 0 : 1))
+                .toList();
+
+        for (PricingPolicyAbstract policy : sortedPolicies) {
+            var discountValue = policy.calculateDiscount(price, productQuantity, product);
+            price = price.subtract(discountValue);
+        }
+        return price;
     }
 
     private void validatePolicies(List<PricingPolicyAbstract> policies) {
@@ -52,10 +71,6 @@ public class DiscountCalculationHandler {
         }
     }
 
-    private BigDecimal calculateDiscountOnProduct(@NotNull BigDecimal price, @NotNull PricingPolicyAbstract policy){
-
-
-    }
 
     private Product getProduct(@NotNull UUID productId) {
         return productRepository.findById(productId).orElseThrow(() -> new NotFoundException("Could not find product with id: " + productId));

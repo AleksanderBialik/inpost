@@ -2,6 +2,7 @@ plugins {
     id 'java'
     id 'org.springframework.boot' version '3.4.0'
     id 'io.spring.dependency-management' version '1.1.6'
+    id "groovy"
 }
 
 group = 'org.example'
@@ -26,11 +27,17 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-security'
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-validation'
+    implementation 'org.springframework.boot:spring-boot-starter-webflux'
     implementation 'org.jetbrains:annotations:24.0.1'
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.security:spring-security-test'
+    testImplementation "org.spockframework:spock-core:2.4-M1-groovy-4.0"
+    testImplementation "org.spockframework:spock-spring:2.4-M1-groovy-4.0"
+    testImplementation "org.testcontainers:mongodb"
+    testImplementation "org.testcontainers:spock"
+    testImplementation "org.testcontainers:testcontainers"
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
 

@@ -23,7 +23,7 @@ public class GlobalControllerAdvice {
     }
 
     @ExceptionHandler(NotFoundException.class)
-    ResponseEntity<ErrorResponse> handleNotFoundException(IllegalStateException ex) {
+    ResponseEntity<ErrorResponse> handleNotFoundException(NotFoundException ex) {
         return getResponse(NOT_FOUND, ex);
     }
 

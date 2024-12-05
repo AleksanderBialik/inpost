@@ -1,0 +1,13 @@
+{
+  "name": "test",
+  "type": "PRODUCT_AMOUNT",
+  "discountLevels": [
+    {
+      "minProductsQuantity": 50,
+      "value": 10
+    }
+  ],
+  "minProductsPriceBeforeTax": 1,
+  "canBeAppliedWithOtherPolicies": true,
+  "calculationType": "PERCENTAGE"
+}

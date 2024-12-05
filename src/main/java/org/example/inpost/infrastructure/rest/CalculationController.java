@@ -25,13 +25,10 @@ public class CalculationController {
         var response = CalculationResponse.builder()
                 .productId(calculation.productId())
                 .productName(calculation.productName())
-                .productCount(calculation.productCount())
+                .productQuantity(calculation.productQuantity())
                 .productBasePrice(calculation.productBasePrice())
-                .productBasePriceWithTax(calculation.productBasePriceWithTax())
-                .productDiscountedPrice(calculation.productDiscountedPrice())
-                .productsDiscountedPriceWithTax(calculation.productsDiscountedPriceWithTax())
-                .productsDiscountedPrice(calculation.productsDiscountedPrice())
-                .productsDiscountedPriceWithTax(calculation.productsDiscountedPriceWithTax())
+                .totalDiscountedPrice(calculation.totalDiscountedPrice())
+                .totalDiscountedPriceWithTax(calculation.totalDiscountedPriceWithTax())
                 .build();
         return ResponseEntity.ok().body(response);
 

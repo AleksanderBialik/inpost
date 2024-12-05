@@ -3,6 +3,8 @@ package org.example.inpost.infrastructure.rest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.example.inpost.application.ProductAmountBasedPricingPolicyCreationHandler;
+import org.example.inpost.application.command.CreateProductQuantityBasedPricingPolicyCreationCommand;
+import org.example.inpost.common.DiscountLevel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -26,15 +28,14 @@ public class PricingPolicyController {
 
         UUID resourceId = switch (request) {
             case ProductAmountBasedPricingPolicyRequest req -> {
-                var command = ProductAmountBasedPricingPolicyCreationHandler.CreateProductAmountBasedPricingPolicyCreationCommand
+                var command = CreateProductQuantityBasedPricingPolicyCreationCommand
                         .builder()
                         .name(req.name())
                         .minProductsPriceBeforeTax(req.minProductsPriceBeforeTax())
                         .type(req.type())
-                        .value(req.value())
                         .canBeAppliedWithOtherPolicies(req.canBeAppliedWithOtherPolicies())
                         .calculationType(req.calculationType())
-                        .minProductsCount(req.minProductsCount())
+                        .discountLevels(req.discountLevels().stream().map(it -> DiscountLevel.builder().minProductsQuantity(it.minProductsQuantity).value(it.value).build()).toList())
                         .build();
                 yield productAmountBasedPricingPolicyCreationHandler.handle(command);
             }

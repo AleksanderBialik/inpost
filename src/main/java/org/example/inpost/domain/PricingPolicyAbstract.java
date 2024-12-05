@@ -1,7 +1,7 @@
 package org.example.inpost.domain;
 
 import lombok.Data;
-import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 import org.example.inpost.common.PolicyCalculationType;
 import org.example.inpost.common.PolicyType;
@@ -13,17 +13,18 @@ import java.util.UUID;
 
 @Document(collection = "pricing_policies")
 @SuperBuilder
-@Getter
+@Data
+@NoArgsConstructor
 public abstract class PricingPolicyAbstract {
     @NotNull UUID id;
     @NotNull String name;
-    @NotNull BigDecimal value;
     @NotNull BigDecimal minProductsPriceBeforeTax;
     @NotNull Boolean canBeAppliedWithOtherPolicies;
     @NotNull PolicyType type;
     @NotNull PolicyCalculationType calculationType;
 
-    public abstract BigDecimal calculateDiscountWithTax(@NotNull Product product, @NotNull Integer amount);
+    private static final BigDecimal HUNDRED = BigDecimal.valueOf(100);
 
-    public abstract BigDecimal calculateDiscountWithoutTax(@NotNull Product product, @NotNull Integer amount);
+    public abstract BigDecimal calculateDiscount(@NotNull BigDecimal currentPrice, @NotNull Integer productQuantity, @NotNull Product product);
+
 }
