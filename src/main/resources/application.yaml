@@ -1,0 +1,8 @@
+spring:
+  data:
+    mongodb:
+      uri: mongodb://mongodb:27017/gig
+
+server:
+  error:
+    include-message: never
