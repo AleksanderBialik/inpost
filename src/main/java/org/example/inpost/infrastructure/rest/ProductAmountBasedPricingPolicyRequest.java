@@ -1,5 +1,6 @@
 package org.example.inpost.infrastructure.rest;
 
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -15,7 +16,7 @@ public record ProductAmountBasedPricingPolicyRequest(@NotNull @Size(min = 1, max
                                                      @NotNull @Min(value = 0) BigDecimal minProductsPriceBeforeTax,
                                                      @NotNull boolean canBeAppliedWithOtherPolicies,
                                                      @NotNull PolicyCalculationType calculationType,
-                                                     @NotNull List<DiscountLevel> discountLevels) implements PricingPolicyRequest {
+                                                     @NotNull @Valid List<DiscountLevel> discountLevels) implements PricingPolicyRequest {
 
     @Override
     public PolicyType type() {
@@ -24,8 +25,13 @@ public record ProductAmountBasedPricingPolicyRequest(@NotNull @Size(min = 1, max
 
     @Data
     @Builder
+
     public static class DiscountLevel {
-        @NotNull @Min(value = 0) Integer minProductsQuantity;
-        @NotNull @Min(value = 0) BigDecimal value;
+        @NotNull
+        @Min(value = 0)
+        Integer minProductsQuantity;
+        @NotNull
+        @Min(value = 0)
+        BigDecimal value;
     }
 }

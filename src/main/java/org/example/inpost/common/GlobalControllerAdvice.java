@@ -3,12 +3,14 @@ package org.example.inpost.common;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import java.text.MessageFormat;
 import java.util.UUID;
 
+import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.CONFLICT;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
@@ -27,6 +29,10 @@ public class GlobalControllerAdvice {
         return getResponse(NOT_FOUND, ex);
     }
 
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    ResponseEntity<ErrorResponse> handleHttpMessageNotReadableException(HttpMessageNotReadableException ex) {
+        return getResponse(BAD_REQUEST, ex);
+    }
 
     private ResponseEntity<ErrorResponse> getResponse(HttpStatus status, Exception exception) {
         ErrorResponse response = ErrorResponse.from(status.value(), status.name(), exception);

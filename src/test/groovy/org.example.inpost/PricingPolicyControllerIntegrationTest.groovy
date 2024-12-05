@@ -2,7 +2,6 @@ package org.example.inpost
 
 import org.example.inpost.common.PolicyCalculationType
 import org.example.inpost.common.PolicyType
-import org.example.inpost.domain.PricingPolicyAbstract
 import org.example.inpost.domain.PricingPolicyRepository
 import org.example.inpost.domain.ProductQuantityBasedPricingPolicy
 import org.springframework.beans.factory.annotation.Autowired

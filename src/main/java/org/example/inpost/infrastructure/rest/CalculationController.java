@@ -19,8 +19,8 @@ public class CalculationController {
     private final DiscountCalculationHandler discountCalculationHandler;
 
     @GetMapping()
-    public ResponseEntity<CalculationResponse> getProductCalculation(@RequestParam UUID productId, @RequestParam List<UUID> policiesIds, @RequestParam Integer productsCount) {
-        var command = DiscountCalculationHandler.CalculateDiscountCommand.builder().productId(productId).policiesIds(policiesIds).productCount(productsCount).build();
+    public ResponseEntity<CalculationResponse> getProductCalculation(@RequestParam UUID productId, @RequestParam List<UUID> policiesIds, @RequestParam Integer productQuantity) {
+        var command = DiscountCalculationHandler.CalculateDiscountCommand.builder().productId(productId).policiesIds(policiesIds).productQuantity(productQuantity).build();
         var calculation = discountCalculationHandler.handle(command);
         var response = CalculationResponse.builder()
                 .productId(calculation.productId())

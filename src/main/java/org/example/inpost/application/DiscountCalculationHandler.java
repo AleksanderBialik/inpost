@@ -35,14 +35,14 @@ public class DiscountCalculationHandler {
         validatePolicies(policies);
 
 
-        var productsPrice = product.price().multiply(BigDecimal.valueOf(command.productCount));
-        var productsWithTaxPrice = product.price().multiply(product.vatPercent().divide(HUNDRED, 2, RoundingMode.HALF_UP).add(BigDecimal.ONE)).multiply(BigDecimal.valueOf(command.productCount));
-        var discountedPrice = calculateDiscountedPriceWithPercentagePriority(product, command.productCount, productsPrice, policies);
-        var discountedTaxedPrice = calculateDiscountedPriceWithPercentagePriority(product, command.productCount, productsWithTaxPrice, policies);
+        var productsPrice = product.price().multiply(BigDecimal.valueOf(command.productQuantity));
+        var productsWithTaxPrice = product.price().multiply(product.vatPercent().divide(HUNDRED, 2, RoundingMode.HALF_UP).add(BigDecimal.ONE)).multiply(BigDecimal.valueOf(command.productQuantity));
+        var discountedPrice = calculateDiscountedPriceWithPercentagePriority(product, command.productQuantity, productsPrice, policies);
+        var discountedTaxedPrice = calculateDiscountedPriceWithPercentagePriority(product, command.productQuantity, productsWithTaxPrice, policies);
 
         return Calculation
                 .builder()
-                .productQuantity(command.productCount)
+                .productQuantity(command.productQuantity)
                 .productName(product.name())
                 .productId(command.productId)
                 .productBasePrice(product.price())
@@ -83,6 +83,6 @@ public class DiscountCalculationHandler {
 
         @NotNull UUID productId;
         @NotNull List<UUID> policiesIds;
-        @NotNull Integer productCount;
+        @NotNull Integer productQuantity;
     }
 }
